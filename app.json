@@ -1,21 +1,25 @@
 {
   "expo": {
-    "name": "watt",
+    "name": "Watt Tracker",
     "slug": "watt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.chargingtracker.watt",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0D1117",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
+      "permissions": [
+        "android.permission.FOREGROUND_SERVICE"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {
