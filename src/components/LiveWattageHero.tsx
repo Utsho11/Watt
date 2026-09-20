@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Zap, ZapOff } from 'lucide-react-native';
 import { getChargingTier } from '../utils/chargingTiers';
+import { ChargingParticles } from './ChargingParticles';
 
 interface LiveWattageHeroProps {
   watts: number;
@@ -93,8 +94,32 @@ export const LiveWattageHero: React.FC<LiveWattageHeroProps> = ({
     };
   });
 
+  const orbitalStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${rotationAnim.value}deg` }],
+    };
+  });
+
   return (
     <View style={styles.container}>
+      {/* Dynamic Rising Electric Spark Particles */}
+      <ChargingParticles
+        watts={smoothedWatts}
+        isCharging={isCharging}
+        color={tier.color}
+      />
+
+      {/* Rotating Orbital Electric Ring */}
+      {isCharging && (
+        <Animated.View
+          style={[
+            styles.orbitalRing,
+            { borderColor: tier.color },
+            orbitalStyle,
+          ]}
+        />
+      )}
+
       {/* Outer Pulse Waves */}
       <Animated.View
         style={[
@@ -176,6 +201,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 9999,
     borderWidth: 1.5,
+  },
+  orbitalRing: {
+    position: 'absolute',
+    width: RING_SIZE + 32,
+    height: RING_SIZE + 32,
+    borderRadius: 9999,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    opacity: 0.6,
   },
   outerRing: {
     width: RING_SIZE + 44,

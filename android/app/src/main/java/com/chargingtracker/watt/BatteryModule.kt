@@ -121,6 +121,17 @@ class BatteryModule(private val reactContext: ReactApplicationContext) :
             reactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 ?.emit("onBatteryUpdate", stats)
+
+            // Push updates immediately to Home-Screen Widgets
+            BatteryWidgetProvider.updateAllWidgets(
+                context = reactContext,
+                watts = stats.getDouble("watts"),
+                isCharging = stats.getBoolean("isCharging"),
+                level = stats.getDouble("batteryLevel").toInt(),
+                voltageV = stats.getDouble("voltageV"),
+                currentMa = stats.getDouble("currentMa"),
+                status = stats.getString("status") ?: "unknown"
+            )
         } catch (e: Exception) {
             // Ignore if React instance is not ready or shutting down
         }
@@ -132,6 +143,18 @@ class BatteryModule(private val reactContext: ReactApplicationContext) :
         isTracking = true
         handler = Handler(Looper.getMainLooper())
         handler?.post(pollRunnable)
+
+        // Start Foreground Service for continuous background tracking & persistent notification
+        try {
+            val serviceIntent = Intent(reactContext, ChargingForegroundService::class.java)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                reactContext.startForegroundService(serviceIntent)
+            } else {
+                reactContext.startService(serviceIntent)
+            }
+        } catch (e: Exception) {
+            // Ignore foreground service launch failure on restricted devices
+        }
     }
 
     @ReactMethod
@@ -139,6 +162,23 @@ class BatteryModule(private val reactContext: ReactApplicationContext) :
         isTracking = false
         handler?.removeCallbacks(pollRunnable)
         handler = null
+
+        try {
+            val serviceIntent = Intent(reactContext, ChargingForegroundService::class.java)
+            reactContext.stopService(serviceIntent)
+        } catch (e: Exception) {
+            // Ignore stop failure
+        }
+    }
+
+    @ReactMethod
+    fun startForegroundTracking() {
+        startTracking()
+    }
+
+    @ReactMethod
+    fun stopForegroundTracking() {
+        stopTracking()
     }
 
     @ReactMethod

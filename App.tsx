@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Zap, History, Activity } from 'lucide-react-native';
+import { Zap, History, Activity, Maximize2 } from 'lucide-react-native';
 
 import { useChargingTracker } from './src/hooks/useChargingTracker';
 import { LiveWattageHero } from './src/components/LiveWattageHero';
@@ -17,9 +17,11 @@ import { MetricsGrid } from './src/components/MetricsGrid';
 import { LiveSessionCard } from './src/components/LiveSessionCard';
 import { HistoryList } from './src/components/HistoryList';
 import { SimulationControls } from './src/components/SimulationControls';
+import { FullscreenChargingModal } from './src/components/FullscreenChargingModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'live' | 'history'>('live');
+  const [showFullscreenAnim, setShowFullscreenAnim] = useState(false);
 
   const {
     stats,
@@ -95,12 +97,28 @@ export default function App() {
 
           {activeTab === 'live' ? (
             <>
-              {/* Reactive Live Wattage Hero Ring */}
-              <LiveWattageHero
-                watts={stats.watts}
-                smoothedWatts={smoothedWatts}
-                isCharging={stats.isCharging}
-              />
+              {/* Reactive Live Wattage Hero Ring (Tap to enter Fullscreen mode) */}
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => setShowFullscreenAnim(true)}
+              >
+                <LiveWattageHero
+                  watts={stats.watts}
+                  smoothedWatts={smoothedWatts}
+                  isCharging={stats.isCharging}
+                />
+              </TouchableOpacity>
+
+              {/* Fullscreen Animation Mode Button */}
+              <TouchableOpacity
+                style={styles.fullscreenBtn}
+                onPress={() => setShowFullscreenAnim(true)}
+              >
+                <Maximize2 size={13} color="#38BDF8" />
+                <Text style={styles.fullscreenBtnText}>
+                  Fullscreen Charging Animation
+                </Text>
+              </TouchableOpacity>
 
               {/* Active Session Telemetry Card */}
               <LiveSessionCard
@@ -122,6 +140,15 @@ export default function App() {
             />
           )}
         </ScrollView>
+
+        {/* Immersive Fullscreen Charging Animation Modal */}
+        <FullscreenChargingModal
+          visible={showFullscreenAnim}
+          onClose={() => setShowFullscreenAnim(false)}
+          stats={stats}
+          smoothedWatts={smoothedWatts}
+          activeSession={activeSession}
+        />
       </View>
     </SafeAreaView>
   );
@@ -206,5 +233,23 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 32,
+  },
+  fullscreenBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(56, 189, 248, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.25)',
+    marginHorizontal: 16,
+    marginBottom: 8,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  fullscreenBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#38BDF8',
   },
 });

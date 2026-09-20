@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">Watt Tracker</string>
+  <string name="widget_1x1_description">Compact live charging wattage &amp; battery level</string>
+  <string name="widget_2x2_description">Detailed live charging wattage, speed tier &amp; voltage</string>
 </resources>

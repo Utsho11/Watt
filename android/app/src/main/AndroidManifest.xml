@@ -30,5 +30,42 @@
         <data android:scheme="exp+watt"/>
       </intent-filter>
     </activity>
+
+    <!-- Background Service for persistent notification and live widget updates -->
+    <service
+        android:name=".ChargingForegroundService"
+        android:enabled="true"
+        android:exported="false"
+        android:foregroundServiceType="specialUse">
+      <property
+          android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+          android:value="Live battery charging wattage tracking" />
+    </service>
+
+    <!-- 1x1 Compact Home Screen Widget -->
+    <receiver
+        android:name=".BatteryWidgetProvider1x1"
+        android:exported="true"
+        android:label="Watt Tracker (1x1)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/battery_widget_1x1_info" />
+    </receiver>
+
+    <!-- 2x2 Expanded Home Screen Widget -->
+    <receiver
+        android:name=".BatteryWidgetProvider2x2"
+        android:exported="true"
+        android:label="Watt Tracker (2x2)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/battery_widget_2x2_info" />
+    </receiver>
   </application>
 </manifest>
