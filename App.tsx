@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Zap, History, Activity, Maximize2 } from 'lucide-react-native';
@@ -47,9 +48,10 @@ export default function App() {
         {/* Top App Header */}
         <View style={styles.header}>
           <View style={styles.headerTitleRow}>
-            <View style={styles.logoBadge}>
-              <Zap size={18} color="#10B981" fill="#10B981" />
-            </View>
+            <Image
+              source={require('./assets/icon.png')}
+              style={styles.logoImage}
+            />
             <View>
               <Text style={styles.appTitle}>WATT TRACKER</Text>
               <Text style={styles.appSubtitle}>Real-time Android Charging Telemetry</Text>
@@ -178,15 +180,10 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 12,
   },
-  logoBadge: {
-    width: 36,
-    height: 36,
+  logoImage: {
+    width: 38,
+    height: 38,
     borderRadius: 10,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
   },
   appTitle: {
     fontSize: 16,
