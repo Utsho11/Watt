@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.widget.RemoteViews
+import com.chargingtracker.watt.R
+import java.util.Locale
 
 open class BatteryWidgetProvider : AppWidgetProvider() {
 
@@ -50,7 +52,7 @@ open class BatteryWidgetProvider : AppWidgetProvider() {
                 val views1x1 = RemoteViews(context.packageName, R.layout.widget_battery_1x1)
                 views1x1.setOnClickPendingIntent(R.id.widget_1x1_root, pendingIntent)
 
-                val wattText = if (isCharging) "${String.format("%.1f", watts)}W" else "0W"
+                val wattText = if (isCharging) "${String.format(Locale.US, "%.1f", watts)}W" else "0W"
                 views1x1.setTextViewText(R.id.widget_1x1_watts, wattText)
                 views1x1.setTextViewText(R.id.widget_1x1_level, "$level%")
                 views1x1.setTextViewText(
@@ -72,7 +74,7 @@ open class BatteryWidgetProvider : AppWidgetProvider() {
                 val views2x2 = RemoteViews(context.packageName, R.layout.widget_battery_2x2)
                 views2x2.setOnClickPendingIntent(R.id.widget_2x2_root, pendingIntent)
 
-                val wattText = if (isCharging) String.format("%.1f", watts) else "0.0"
+                val wattText = if (isCharging) String.format(Locale.US, "%.1f", watts) else "0.0"
                 views2x2.setTextViewText(R.id.widget_2x2_watts, wattText)
                 views2x2.setTextViewText(R.id.widget_2x2_level, "$level%")
                 views2x2.setProgressBar(R.id.widget_2x2_progress, 100, level, false)
@@ -94,7 +96,7 @@ open class BatteryWidgetProvider : AppWidgetProvider() {
                 views2x2.setTextViewText(R.id.widget_2x2_badge, badgeText)
                 views2x2.setTextColor(R.id.widget_2x2_badge, badgeColor)
 
-                val voltText = if (voltageV > 0) "${String.format("%.2f", voltageV)} V" else "-- V"
+                val voltText = if (voltageV > 0) "${String.format(Locale.US, "%.2f", voltageV)} V" else "-- V"
                 val currText = if (currentMa != 0.0) "${Math.abs(currentMa).toInt()} mA" else "-- mA"
                 views2x2.setTextViewText(R.id.widget_2x2_voltage, voltText)
                 views2x2.setTextViewText(R.id.widget_2x2_current, currText)

@@ -8,12 +8,15 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import com.chargingtracker.watt.R
+import java.util.Locale
 import kotlin.math.abs
 
 class ChargingForegroundService : Service() {
@@ -45,7 +48,11 @@ class ChargingForegroundService : Service() {
         if (!isRunning) {
             isRunning = true
             val initialNotification = buildNotification("Monitoring battery...", "Starting live wattage tracking")
-            startForeground(notificationId, initialNotification)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(notificationId, initialNotification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            } else {
+                startForeground(notificationId, initialNotification)
+            }
 
             handler = Handler(Looper.getMainLooper())
             handler?.post(pollRunnable)
@@ -133,15 +140,15 @@ class ChargingForegroundService : Service() {
             // Update Notification
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val title = if (isCharging) {
-                "⚡ ${String.format("%.1f", watts)} W — Charging"
+                "⚡ ${String.format(Locale.US, "%.1f", watts)} W — Charging"
             } else {
                 "🔋 ${batteryPct}% — Battery"
             }
 
             val subtitle = if (isCharging) {
-                "${batteryPct}% • ${String.format("%.2f", voltageVolts)}V • ${currentMa.toInt()} mA"
+                "${batteryPct}% • ${String.format(Locale.US, "%.2f", voltageVolts)}V • ${currentMa.toInt()} mA"
             } else {
-                "Not charging (${String.format("%.2f", voltageVolts)}V)"
+                "Not charging (${String.format(Locale.US, "%.2f", voltageVolts)}V)"
             }
 
             val updatedNotification = buildNotification(title, subtitle)
